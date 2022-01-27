@@ -95,10 +95,16 @@ int main(int argc, char** argv) {
             auto plat_devs = plat.get_devices();
             for (auto dev : plat_devs) {
                 try {
-                    if (dev.is_gpu() && (cl::sycl::backend() == cl::sycl::backend::ext_oneapi_level_zero && plat.get_info<cl::sycl::info::platform::name>().find(
+                    /* Do not test for OpenCL device on Level Zero GPU backend */
+                    if (dev.is_gpu() && (cl::sycl::backend() == 
+                                            cl::sycl::backend::ext_oneapi_level_zero && 
+                                            plat.get_info<cl::sycl::info::platform::name>().find(
                                             "OpenCL") != std::string::npos))
                         continue;
-                    if (dev.is_gpu() && (cl::sycl::backend() == cl::sycl::backend::opencl && plat.get_info<cl::sycl::info::platform::name>().find(
+                    /* Do not test for Level-Zero device on OpenCL GPU backend */
+                    if (dev.is_gpu() && (cl::sycl::backend() == 
+                                            cl::sycl::backend::opencl && 
+                                            plat.get_info<cl::sycl::info::platform::name>().find(
                                             "Level-Zero") != std::string::npos))
                         continue;
                     if (unique_devices.find(dev.get_info<cl::sycl::info::device::name>()) ==
